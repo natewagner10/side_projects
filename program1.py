@@ -16,6 +16,11 @@ cur = conn.cursor()
 setnums = input("Please enter the set_num associated with the set you have, seperated by a comma: ")
 setnums = "0013-1, 0013-10, 0055-1, 00222-1, 0009995-1"
 
+setnums = str(setnums)
+if len(setnums) > 1:
+    setnums = setnums.split(",")
+    setnums = [x.replace(' ', '') for x in setnums]
+
 
 # clean the user input
 setnums = setnums.split(",")
@@ -96,9 +101,39 @@ for i in range(1, len(ALLPartsList)):
 
 
 
-
 cur.execute("select set_num, set_name, sum/num_parts::float*100 as percentParts from (select a.set_num, a.sum, b.set_name, b.num_parts from (select a.set_num, b.sum from inventories a, (select inventory_id, sum(quantity) from (" + GetParts + ") hold group by hold.inventory_id order by sum desc) b where a.inventory_id = b.inventory_id) a, sets b where a.set_num = b.set_num) a order by percentParts desc limit 10;")
 InventoryID_SumParts = cur.fetchall()
 print(InventoryID_SumParts)
+
+
+
+
+
+# prompt user to see which parts they need 
+getMoreInfo = input("Do you want to see what parts you need for non-full sets?   Enter yes or no: ")
+if getMoreInfo == "yes":
+    getMissing = input("Enter the set number to see which parts you need: ")
+
+
+
+# find inventory ID from set_num
+cur.execute("select inventory_id from inventories where set_num = " + "'" + getMissing + "'" + ";")
+InvenID = cur.fetchall()
+InvenID = clean(InvenID)
+
+# Find all parts from the set of interest:
+cur.execute("select part_num from inventory_parts where inventory_id = " + str(InvenID[0]) + ";")
+MissingParts = cur.fetchall()
+
+# loop through list and see which parts we don't have 
+# run time is O(n), can probably reduce to O(logN)
+Needed = []
+for i in ALLPartsList:
+    if i not in MissingParts:
+        Needed.append(i)
+    else:
+        pass
+
+print(Needed)
 
 
