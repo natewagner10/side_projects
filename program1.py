@@ -16,11 +16,6 @@ cur = conn.cursor()
 setnums = input("Please enter the set_num associated with the set you have, seperated by a comma: ")
 setnums = "0013-1, 0013-10, 0055-1, 00222-1, 0009995-1"
 
-setnums = str(setnums)
-if len(setnums) > 1:
-    setnums = setnums.split(",")
-    setnums = [x.replace(' ', '') for x in setnums]
-
 
 # clean the user input
 setnums = setnums.split(",")
