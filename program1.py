@@ -50,9 +50,6 @@ InventoryIDS = cur.fetchall()
 
 
 
-#InventoryIDS = [(1414,), (4609,), (5004,), (12208,)]
-# select * from inventory_parts where inventory_id = 1414 or inventory_id = 4609 or inventory_id = 5004 or inventory_id = 12208;
-
 # function to clean the results from a query:
 def clean(i):
     holder = []
@@ -88,10 +85,6 @@ ALLPartsList = cur.fetchall()
 # clean parts
 ALLPartsList = clean(ALLPartsList)
 
-#ALLPartsList = [('3626apr0001',), ('3838',), ('3842a',), ('3962a',), ('970c00',), ('973p90c02',), ('3626apr0001',)]
-#ALLPartsList = clean(ALLPartsList)
-
-# select inventory_id, sum(quantity) from (select inventory_id, part_num, quantity from inventory_parts where part_num = '3626apr0001' or part_num = '3838' or part_num = '3842a' or part_num = '3962a' or part_num = '970c00' or part_num = '973p90c02') hold group by hold.inventory_id order by sum desc;
 
 # initialize query to get quantity of parts we have
 GetParts = "select inventory_id, part_num, quantity from inventory_parts where part_num = " + "'" + ALLPartsList[0] + "'" 
@@ -111,12 +104,7 @@ for i in range(1, len(ALLPartsList)):
 
 cur.execute("select set_num, set_name, sum/num_parts::float*100 as percentParts from (select a.set_num, a.sum, b.set_name, b.num_parts from (select a.set_num, b.sum from inventories a, (select inventory_id, sum(quantity) from (" + GetParts + ") hold group by hold.inventory_id order by sum desc) b where a.inventory_id = b.inventory_id) a, sets b where a.set_num = b.set_num) a order by percentParts desc limit 10;")
 InventoryID_SumParts = cur.fetchall()
-print("select set_num, set_name, sum/num_parts::float*100 as percentParts from (select a.set_num, a.sum, b.set_name, b.num_parts from (select a.set_num, b.sum from inventories a, (select inventory_id, sum(quantity) from (" + GetParts + ") hold group by hold.inventory_id order by sum desc) b where a.inventory_id = b.inventory_id) a, sets b where a.set_num = b.set_num) a order by percentParts desc limit 10;")
-
-
-
-
-
+print(InventoryID_SumParts)
 
 
 
