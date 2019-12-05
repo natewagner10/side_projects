@@ -14,7 +14,7 @@ cur = conn.cursor()
 
 # User will input the set_nums from sets that they have
 setnums = input("Please enter the set_num associated with the set you have, seperated by a comma: ")
-setnums = "0013-1, 0013-10, 0055-1, 00222-1, 0009995-1"
+#setnums = "0013-1, 0013-10, 0055-1, 00222-1, 0009995-1"
 
 
 # clean the user input
