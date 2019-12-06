@@ -156,7 +156,7 @@ def findOtherSets(setnums):
   
     
 
-findOtherSets(sys.argv[1])
+findOtherSets(str(sys.argv[1]))
 
 
 
