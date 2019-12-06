@@ -9,6 +9,7 @@ Created on Mon Dec  2 12:27:11 2019
 import plotly.graph_objects as go
 from plotly.offline import plot
 import psycopg2
+import sys
 conn = psycopg2.connect("dbname=LEGOS user=nwagner")
 cur = conn.cursor()
 
@@ -155,7 +156,7 @@ def findOtherSets(setnums):
   
     
 
-findOtherSets('55-0')
+findOtherSets(sys.argv[1])
 
 
 
