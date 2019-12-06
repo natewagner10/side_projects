@@ -12,6 +12,21 @@ conn = psycopg2.connect("dbname=LEGOS user=nwagner")
 cur = conn.cursor()
 
 
+
+
+# function to clean the results from a query:
+def clean(i):
+    holder = []
+    for x in range(0, len(i) ):
+        holder.append(i[x][0])
+    return holder
+
+# returns cleaned SQL output 
+def printdata(sets, names, percents):
+    for x in range(0, len(sets)):
+        print(str(sets[x]) + '    ' + str(names[x]) + '     ' + str(percents[x]))
+
+
 def findOtherSets(numToSee = 10, numFull = False):
     
     # User will input the set_nums from sets that they have
@@ -44,15 +59,6 @@ def findOtherSets(numToSee = 10, numFull = False):
     InventoryIDS = cur.fetchall()
     
     
-    
-    
-    
-    # function to clean the results from a query:
-    def clean(i):
-        holder = []
-        for x in range(0, len(i) ):
-            holder.append(i[x][0])
-        return holder
         
     
     IDs = clean(InventoryIDS)
@@ -100,11 +106,17 @@ def findOtherSets(numToSee = 10, numFull = False):
     
     cur.execute("select set_num, set_name, sum/num_parts::float*100 as percentParts from (select a.set_num, a.sum, b.set_name, b.num_parts from (select a.set_num, b.sum from inventories a, (select inventory_id, sum(quantity) from (" + GetParts + ") hold group by hold.inventory_id order by sum desc) b where a.inventory_id = b.inventory_id) a, sets b where a.set_num = b.set_num) a order by percentParts desc limit " + str(numToSee) + ";")
     InventoryID_SumParts = cur.fetchall()
-    print(InventoryID_SumParts)
+    #print(InventoryID_SumParts)
     
-
+    sets = []
+    names = []
+    percents = [] 
+    for x in InventoryID_SumParts:
+        sets.append(x[0])
+        names.append(x[1])
+        percents.append(x[2])
     
-    
+    printdata(sets, names, percents)
     
     # prompt user to see which parts they need 
     getMoreInfo = input("Do you want to see what parts you need for non-full sets?   Enter yes or no: ")
@@ -131,18 +143,43 @@ def findOtherSets(numToSee = 10, numFull = False):
             else:
                 pass
         
-        print(Needed)
+        for x in Needed:
+            print (x)
+        
     else:
         pass
     
+    # If user wants to see how many complete sets they can build:
     if numFull == True:
         cur.execute("select count(*) from (select set_num, set_name, sum/num_parts::float*100 as percentParts from (select a.set_num, a.sum, b.set_name, b.num_parts from (select a.set_num, b.sum from inventories a, (select inventory_id, sum(quantity) from (" + GetParts + ") hold group by hold.inventory_id order by sum desc) b where a.inventory_id = b.inventory_id) a, sets b where a.set_num = b.set_num) a order by percentParts desc) b where percentparts >= 100 ;")
         numberOfCompletes = cur.fetchall()
-        print("The number of complete sets you can build is " + str(clean(numberOfCompletes)))
+        print("You can build " + str(clean(numberOfCompletes)[0]) + " complete sets.")
     else:
         pass
     
 findOtherSets(numToSee = 10, numFull = True)
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
