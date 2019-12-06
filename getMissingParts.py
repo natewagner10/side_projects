@@ -105,5 +105,5 @@ def getMissingParts(setnums, getMissing):
         
 
     
-getMissingParts(sys.argv[1], sys.argv[2])
+getMissingParts(str(sys.argv[1]), str(sys.argv[2]))
 
